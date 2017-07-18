@@ -1,0 +1,67 @@
+﻿@model IEnumerable<MoviesTracker.Models.Film>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+    @using(Html.BeginForm("Index", "Films", FormMethod.Get))
+    {
+        <p>
+            Genre: @Html.DropDownList("Genre", "All")
+            Title: @Html.TextBox("SearchString") <br />
+            <input type="submit" value="Filter" />
+        </p>
+    }
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+            <a href="@Url.Action("Index", "Films", new { order = "Title", orderDirection = "asc"} )">&#x25B2;</a>
+            <a href="@Url.Action("Index", "Films", new { order = "Title", orderDirection = "desc"} )">&#x25BC;</a>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReleaseTime)
+            <a href="@Url.Action("Index", "Films", new { order = "ReleaseTime", orderDirection = "asc"} )">&#x25B2;</a>
+            <a href="@Url.Action("Index", "Films", new { order = "ReleaseTime", orderDirection = "desc"} )">&#x25BC;</a>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Genre)
+            <a href="@Url.Action("Index", "Films", new { order = "Genre", orderDirection = "asc"} )">&#x25B2;</a>
+            <a href="@Url.Action("Index", "Films", new { order = "Genre", orderDirection = "desc"} )">&#x25BC;</a>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rate)
+            <a href="@Url.Action("Index", "Films", new { order = "Rate", orderDirection = "asc"} )">&#x25B2;</a>
+            <a href="@Url.Action("Index", "Films", new { order = "Rate", orderDirection = "desc"} )">&#x25BC;</a>
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReleaseTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Genre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit Me", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete Me", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>
