@@ -1,7 +1,40 @@
-﻿@{
+﻿@*@{
     ViewBag.Title = "About";
 }
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<p>Use this area to provide additional information.</p>*@
+@{ViewBag.Title = "Ajax Example";
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#TumOgrencileriGetir").click(function () {
+            $.ajax({
+                url: '/Home/TumOgrencileriGetir',
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $("#TumOgrenciler").append(
+                            "<div style='border-style:ridge;'>Öğrenci Adı : <strong>" + item.Ad + "</strong><br>" +
+                            "Öğrenci Soyadı : <strong>" + item.SoyAd + "</strong><br>" +
+                            "Öğrenci Şubesi : <strong>" + item.Sube + "</strong><br>" +
+                            "Öğrenci Sınıfı : <strong>" + item.Sinif + "</strong><br>" +
+                            "Öğrenci Numarası : <strong>" + item.OgrenciNo + "</strong></div>"
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<div>
+    <input type="submit" id="TumOgrencileriGetir" value="Tüm Öğrencileri Getir" />
+    <div id="TumOgrenciler"></div>
+</div>

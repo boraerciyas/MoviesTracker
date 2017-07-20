@@ -1,17 +1,71 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "JQuery Tutorial";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+@*<script src="~/Scripts/jquery-1.10.2.js"></script>*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write("<script src='~/Scripts/jquery-1.10.2.js'><\/script>");
+</script>
+@*<script type="text/javascript">
+    $('document').ready(function () {
+        if ($('#button1').length > 0) {
+            alert('Button1 is found');
+        }
+        else {
+            alert('Button1 is not found');
+        }
+        $('#button1').click(function () {
+            alert('Welcome to JQuery Tutorial!');
+        }).css('background-color','bisque');
+    });
+</script>*@
+<script>
+    $('document').ready(function () {
+        $('tbody tr:even').css('background-color', 'grey');
+        $('tbody tr:odd').css('background-color', 'yellow');
+        $('[size]').text(function () {
+            var size = $(this).attr('size');
+            return $(this).text() + size;
+        })
+    });
+</script>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<input type="submit" id="button1" value="Click Me" />
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div>
+    <table border="1" style="margin: 60px; width: 60%;">
+        <thead>
+            <tr>
+                <th>Languages</th>
+                <th>Develop Date</th>
+                <th>Did I like it?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Java</td>
+                <td>1995</td>
+                <td>YES</td>
+            </tr>
+            <tr>
+                <td>C++</td>
+                <td>1985</td>
+                <td>I'm Not Sure</td>
+            </tr>
+            <tr>
+                <td>AngularJS</td>
+                <td>2012</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>Android</td>
+                <td>2008</td>
+                <td>Yes</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 70px;"></div>
+    <hr />
+    <div size="75"> Size of the element is </div>
+</div>

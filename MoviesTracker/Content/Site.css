@@ -22,3 +22,12 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.sort-button a
+{
+    color: #000000!important;
+}
+
+.sort-active a {
+    color: #428bca!important;
+}

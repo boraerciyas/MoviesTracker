@@ -32,10 +32,8 @@ namespace MoviesTracker.Models
         }
         [DisplayFormat(DataFormatString ="{0:0.0}", ApplyFormatInEditMode =true)]
         [Range(0.0, 9.9, ErrorMessage = "Rate values should be 0 to 10.")]
-        public decimal Rate
-        {
-            get; set;
-        }
+        public decimal Rate { get; set; }
+        public Boolean Status{ get; set; }
     }
 
     //public class MoviesDBContext : DbContext

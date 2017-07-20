@@ -14,22 +14,40 @@ namespace MoviesTracker.Controllers
         {
             switch (order)
             {
-                case "Title":
-                    order = "Title";
+                case DatabaseColumn.Title:
+                    order = DatabaseColumn.Title;
                     break;
-                case "Rate":
-                    order = "Rate";
+                case DatabaseColumn.Rate:
+                    order = DatabaseColumn.Rate;
                     break;
-                case "ReleaseTime":
-                    order = "ReleaseTime";
+                case DatabaseColumn.ReleaseTime:
+                    order = DatabaseColumn.ReleaseTime;
                     break;
-                case "Genre":
-                    order = "Genre";
+                case DatabaseColumn.Genre:
+                    order = DatabaseColumn.Genre;
+                    break;
+                case DatabaseColumn.Status:
+                    order = DatabaseColumn.Status;
                     break;
                 default:
-                    order = "Title";
+                    order = DatabaseColumn.Title;
                     break;
             }
+            switch (orderDirection)
+            {
+                case OrderDirection.Ascending:
+                    orderDirection = OrderDirection.Ascending;
+                    break;
+                case OrderDirection.Descending:
+                    orderDirection = OrderDirection.Descending;
+                    break;
+                default:
+                    orderDirection = OrderDirection.Ascending;
+                    break;
+            }
+
+            ViewBag.Order = order;
+            ViewBag.OrderDirection = orderDirection;
 
             var movies = Service.Database.GetFilms(order, orderDirection);
             
@@ -64,6 +82,7 @@ namespace MoviesTracker.Controllers
                 movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
+            // return Json(movies, JsonRequestBehavior.AllowGet);
             return View(movies);
         }
 
@@ -119,26 +138,28 @@ namespace MoviesTracker.Controllers
             
             return View(film);
         }
+         
+        [HttpPost] 
+        public ActionResult DeleteFilm(int movieId)
+        { 
+            bool deleteResult = Service.Database.DeleteFilm(movieId);
 
-        // GET: Films/Delete/5
-        public ActionResult Delete(int id)
-        {
-            Film film = Service.Database.GetFilms(id);
-            if (film == null)
+            return Json(new
             {
-                return HttpNotFound();
-            }
-            return View(film);
+                Result = deleteResult   //    if (data.Result) {   data.Result => burdaki Result demek 
+            }, JsonRequestBehavior.AllowGet);
         }
 
-        // POST: Films/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        [HttpPost]
+        public ActionResult StatusUpdate(int movieId, bool statusChecked)
         {
-            Film film = Service.Database.GetFilms(id);
-            Service.Database.DeleteFilm(id);
-            return RedirectToAction("Index");
+            int checkeda;
+            if(statusChecked) {checkeda = 1; }
+            else checkeda= 0;
+            bool updateStatus = Service.Database.UpdateStatus(movieId, checkeda);
+            return Json(new {
+                Result = updateStatus
+            }, JsonRequestBehavior.AllowGet);
         }
     }
 }

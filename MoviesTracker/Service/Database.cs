@@ -46,13 +46,12 @@ namespace MoviesTracker.Service
                         {
                             Film film = new Film()
                             {
-                                ID = Convert.ToInt32(reader["ID"]),
-                                Rate = Convert.ToDecimal(reader["Rate"]),
-                                ReleaseTime = reader["ReleaseTime"] == DBNull.Value ? new DateTime(1995, 1, 1) : Convert.ToDateTime(reader["ReleaseTime"]),
-                                Title = reader["Title"] == DBNull.Value ? "" : Convert.ToString(reader["Title"]),
-                                Genre = reader["Genre"] == DBNull.Value ? "" : Convert.ToString(reader["Genre"]),
-                                //Director = reader["Director"] == DBNull.Value ? "" : Convert.ToString(reader["Director"])
-
+                                ID = Convert.ToInt32(reader[DatabaseColumn._ID]),
+                                Rate = Convert.ToDecimal(reader[DatabaseColumn.Rate]),
+                                ReleaseTime = reader[DatabaseColumn.ReleaseTime] == DBNull.Value ? new DateTime(1995, 1, 1) : Convert.ToDateTime(reader[DatabaseColumn.ReleaseTime]),
+                                Title = reader[DatabaseColumn.Title] == DBNull.Value ? "" : Convert.ToString(reader[DatabaseColumn.Title]),
+                                Genre = reader[DatabaseColumn.Genre] == DBNull.Value ? "" : Convert.ToString(reader[DatabaseColumn.Genre]),
+                                Status = reader[DatabaseColumn.Status] == DBNull.Value ? false : Convert.ToBoolean(reader[DatabaseColumn.Status]),
                             };
                             films.Add(film);
                         }
@@ -128,17 +127,51 @@ namespace MoviesTracker.Service
                 }
             }
         }
-        public static void DeleteFilm(int id)
+
+        public static bool UpdateStatus(int movieId, int checkeda)
+        {
+            using(SqlConnection conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    using(SqlCommand comm = conn.CreateCommand())
+                    {
+                        comm.CommandText = @"UPDATE " + DB_TABLE_NAME + " SET Status = " + checkeda + " WHERE ID = " + movieId;
+
+                        conn.Open();
+
+                        return comm.ExecuteNonQuery() > 0;
+                    }
+                }
+                catch (Exception e)
+                {
+                    
+                }
+            }
+            return false;
+        }
+
+        public static bool DeleteFilm(int id)
         {
             using (SqlConnection conn = new SqlConnection(GetConnectionString()))
             {
-                using (SqlCommand SQLUPDATEFILMCOMMAND = conn.CreateCommand())
+                try
                 {
-                    SQLUPDATEFILMCOMMAND.CommandText = @"DELETE FROM " + DB_TABLE_NAME + " " +
-                                                         "WHERE ID=" + id;
-                    conn.Open();
-                    SQLUPDATEFILMCOMMAND.ExecuteNonQuery();
+                    using (SqlCommand comm = conn.CreateCommand())
+                    {
+                        comm.CommandText = @"DELETE FROM " + DB_TABLE_NAME + " " +
+                                                             "WHERE ID=" + id;
+                        conn.Open();
+
+                        return comm.ExecuteNonQuery() > 0;
+                    }
                 }
+                catch (Exception ex)
+                {
+                   //TODO: Exception Log
+                } 
+
+                return false;
             }
         }
     }

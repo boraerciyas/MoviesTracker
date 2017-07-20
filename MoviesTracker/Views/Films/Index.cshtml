@@ -1,14 +1,68 @@
-﻿@model IEnumerable<MoviesTracker.Models.Film>
+﻿@using MoviesTracker.Models
+@model IEnumerable<MoviesTracker.Models.Film>
 
 @{
     ViewBag.Title = "Index";
 }
 
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.js"></script>
+
+<script type="text/javascript">
+    $(function () {   // Sayfa açtıktan sonra içerdeki işlemler yap
+        $(".delete-movie").on("click", function () {  // event atamak
+            if (confirm("Are you sure?")) { // Onaylama  
+
+                var movieId = $(this).attr("data-id");
+                var row = $(this).closest("tr"); // en yakın element - class etc (selector)
+
+                $.ajax({
+                    type: 'POST',   // Reuest   type  GET, POST, DELETE, PUT ...
+                    url: 'Films/DeleteFilm',  // Request URL 
+                    data: { movieId: movieId }, // Parameters   -- Adı aynı olması lazım    => public ActionResult DeleteFilm(int movieId)   movieId = movieId
+                    success: function (data) {  // data : dönen veri = Output
+                        if (data.Result) { 
+                            $(row).remove(); // row sil 
+                        }
+                    }
+                });
+            }
+
+        });
+
+        $('.status-toggle').change(function () {
+            var status = $(this).is(":checked");
+            var movieId = $(this).attr("data-id");
+
+            $.ajax({
+                type: 'POST',
+                url: '/Films/StatusUpdate',
+                data: { movieId: movieId, statusChecked: status },
+                success: function (data) {
+                    if (data.Result) {
+                        $('#status-label-' + movieId).text(function () {
+                            if (status) { return "New"; }
+                            else return "Second Hand";
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.status-label').text(function () {
+            var status = $(this).attr("check");
+            if (status) { return "New"; }
+            else return "Second Hand";
+        });
+    });
+</script>
+ 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
-    @using(Html.BeginForm("Index", "Films", FormMethod.Get))
+    @Html.ActionLink("Create New", FilmsControllerMethods.Create)
+    @using(Html.BeginForm(FilmsControllerMethods.Index, "Films", FormMethod.Get))
     {
         <p>
             Genre: @Html.DropDownList("Genre", "All")
@@ -17,33 +71,70 @@
         </p>
     }
 </p>
+
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
-            <a href="@Url.Action("Index", "Films", new { order = "Title", orderDirection = "asc"} )">&#x25B2;</a>
-            <a href="@Url.Action("Index", "Films", new { order = "Title", orderDirection = "desc"} )">&#x25BC;</a>
+            <ul class="list-inline">
+                @Html.DisplayNameFor(model => model.Title)
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Title && ViewBag.OrderDirection == OrderDirection.Ascending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Title, orderDirection = OrderDirection.Ascending} )">&#x25B2;</a></li>
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Title && ViewBag.OrderDirection == OrderDirection.Descending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Title, orderDirection = OrderDirection.Descending} )">&#x25BC;</a></li>
+            </ul>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ReleaseTime)
-            <a href="@Url.Action("Index", "Films", new { order = "ReleaseTime", orderDirection = "asc"} )">&#x25B2;</a>
-            <a href="@Url.Action("Index", "Films", new { order = "ReleaseTime", orderDirection = "desc"} )">&#x25BC;</a>
+            <ul class="list-inline">
+                @Html.DisplayNameFor(model => model.ReleaseTime)
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.ReleaseTime && ViewBag.OrderDirection == OrderDirection.Ascending ? "sort-active" : "")  "><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.ReleaseTime, orderDirection = OrderDirection.Ascending} )">&#x25B2;</a></li>
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.ReleaseTime && ViewBag.OrderDirection == OrderDirection.Descending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.ReleaseTime, orderDirection = OrderDirection.Descending} )">&#x25BC;</a></li>
+            </ul>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Genre)
-            <a href="@Url.Action("Index", "Films", new { order = "Genre", orderDirection = "asc"} )">&#x25B2;</a>
-            <a href="@Url.Action("Index", "Films", new { order = "Genre", orderDirection = "desc"} )">&#x25BC;</a>
+            <ul class="list-inline">
+                @Html.DisplayNameFor(model => model.Genre)
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Genre && ViewBag.OrderDirection == OrderDirection.Ascending ? "sort-active" : "")  "><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Genre, orderDirection = OrderDirection.Ascending} )">&#x25B2;</a></li>
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Genre && ViewBag.OrderDirection == OrderDirection.Descending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Genre, orderDirection = OrderDirection.Descending} )">&#x25BC;</a></li>
+            </ul>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Rate)
-            <a href="@Url.Action("Index", "Films", new { order = "Rate", orderDirection = "asc"} )">&#x25B2;</a>
-            <a href="@Url.Action("Index", "Films", new { order = "Rate", orderDirection = "desc"} )">&#x25BC;</a>
+            <ul class="list-inline">
+                @Html.DisplayNameFor(model => model.Rate)
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Rate && ViewBag.OrderDirection == OrderDirection.Ascending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Rate, orderDirection = OrderDirection.Ascending} )">&#x25B2;</a></li>
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Rate && ViewBag.OrderDirection == OrderDirection.Descending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Rate, orderDirection = OrderDirection.Descending} )">&#x25BC;</a></li>
+            </ul>
+        </th>
+        <th>
+            <ul class="list-inline">
+                @Html.DisplayNameFor(model => model.Status)
+                <li class="sort-button" @(ViewBag.Order == DatabaseColumn.Status && ViewBag.OrderDirection == OrderDirection.Ascending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Status, orderDirection = OrderDirection.Ascending} )">&#x25B2;</a></li>
+                <li class="sort-button  @(ViewBag.Order == DatabaseColumn.Status && ViewBag.OrderDirection == OrderDirection.Descending ? "sort-active" : "")"><a href="@Url.Action(FilmsControllerMethods.Index, "Films", new { order = DatabaseColumn.Status, orderDirection = OrderDirection.Descending} )">&#x25BC;</a></li>
+            </ul>
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
+
+    string rowClass = "";
+
+    if(item.Rate < 5)
+    {
+        rowClass = "danger";
+    }
+    else if(item.Rate < 6)
+    {
+        rowClass = "warning";
+    }
+    else if (item.Rate < 7)
+    {
+        rowClass = "active";
+    }
+    else if (item.Rate < 8)
+    {
+        rowClass = "success";
+    }
+
+    <tr class="@rowClass">
         <td>
             @Html.DisplayFor(modelItem => item.Title)
         </td>
@@ -57,9 +148,15 @@
             @Html.DisplayFor(modelItem => item.Rate)
         </td>
         <td>
+            <div class="checkbox">
+                <input type="checkbox" id="status-@item.ID" class="status-toggle" checked="@item.Status" data-id="@item.ID" />
+            </div>
+            <label class="status-label" id="status-label-@item.ID" check="@item.Status">New</label>
+        </td>
+        <td>
             @Html.ActionLink("Edit Me", "Edit", new { id=item.ID }) |
             @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete Me", "Delete", new { id=item.ID })
+            <a href="javascript:void(0)" class="Delete delete-movie" data-id="@item.ID" data-genre="@item.Genre">Delete Me</a>
         </td>
     </tr>
 }

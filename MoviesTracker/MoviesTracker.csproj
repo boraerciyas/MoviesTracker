@@ -152,7 +152,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Common.cs" />
     <Compile Include="Models\Movie.cs" />
+    <Compile Include="Models\Ogrenci.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\Database.cs" />
   </ItemGroup>
@@ -198,12 +200,13 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Films\Create.cshtml" />
-    <Content Include="Views\Films\Delete.cshtml" />
     <Content Include="Views\Films\Details.cshtml" />
     <Content Include="Views\Films\Edit.cshtml" />
     <Content Include="Views\Films\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Scripts\AjaxScripts\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
