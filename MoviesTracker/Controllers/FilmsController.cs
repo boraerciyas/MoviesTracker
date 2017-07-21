@@ -82,7 +82,6 @@ namespace MoviesTracker.Controllers
                 movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
-            // return Json(movies, JsonRequestBehavior.AllowGet);
             return View(movies);
         }
 
@@ -111,10 +110,8 @@ namespace MoviesTracker.Controllers
             Service.Database.SetFilms(film);
             if (ModelState.IsValid)
             {
-                
                 return RedirectToAction("Index");
             }
-
             return View(film);
         }
 
@@ -160,6 +157,12 @@ namespace MoviesTracker.Controllers
             return Json(new {
                 Result = updateStatus
             }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult RateUpdate(int movieId, decimal newRate)
+        {
+            bool updateRate = Service.Database.UpdateRate(movieId, newRate);
+            return Json(new { Result = updateRate }, JsonRequestBehavior.AllowGet);
         }
     }
 }

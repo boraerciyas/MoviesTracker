@@ -64,9 +64,9 @@ namespace MoviesTracker.Service
         public static void SetFilms(Film film)
         {
             using(SqlConnection conn = new SqlConnection(GetConnectionString())) { 
-                using(SqlCommand SQLCREATEFILMCOMMAND = conn.CreateCommand()) { 
-
-                    SQLCREATEFILMCOMMAND.CommandText = @"INSERT INTO Movie.dbo.Films(Title, ReleaseTime, Genre, Rate) VALUES('" + film.Title + "', '" + film.ReleaseTime + "', '" + film.Genre + "', "  + film.Rate +")";
+                using(SqlCommand SQLCREATEFILMCOMMAND = conn.CreateCommand()) {
+                    String date = film.ReleaseTime.ToString("yyyyMMdd");
+                    SQLCREATEFILMCOMMAND.CommandText = @"INSERT INTO Movie.dbo.Films(Title, ReleaseTime, Genre, Rate) VALUES('" + film.Title + "', '" + date + "', '" + film.Genre + "', "  + film.Rate +")";
                     conn.Open();
                     SQLCREATEFILMCOMMAND.ExecuteNonQuery();
                 }
@@ -128,6 +128,24 @@ namespace MoviesTracker.Service
             }
         }
 
+        public static bool UpdateRate(int movieId, decimal newRate)
+        {
+            using (SqlConnection conn = new SqlConnection(GetConnectionString()))
+            {
+                try
+                {
+                    using(SqlCommand comm = conn.CreateCommand())
+                    {
+                        comm.CommandText = @"UPDATE " + DB_TABLE_NAME + " SET " + DatabaseColumn.Rate + " = " + newRate + " WHERE ID = " + movieId;
+                        conn.Open();
+                        return comm.ExecuteNonQuery() > 0;
+                    }
+                }
+                catch (Exception ex) { }
+            }
+            return false;
+        }
+
         public static bool UpdateStatus(int movieId, int checkeda)
         {
             using(SqlConnection conn = new SqlConnection(GetConnectionString()))
@@ -136,14 +154,14 @@ namespace MoviesTracker.Service
                 {
                     using(SqlCommand comm = conn.CreateCommand())
                     {
-                        comm.CommandText = @"UPDATE " + DB_TABLE_NAME + " SET Status = " + checkeda + " WHERE ID = " + movieId;
+                        comm.CommandText = @"UPDATE " + DB_TABLE_NAME + " SET " + DatabaseColumn.Status + " = " + checkeda + " WHERE ID = " + movieId;
 
                         conn.Open();
 
                         return comm.ExecuteNonQuery() > 0;
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     
                 }

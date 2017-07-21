@@ -12,18 +12,18 @@
 <script type="text/javascript">
     $(function () {   // Sayfa açtıktan sonra içerdeki işlemler yap
         $(".delete-movie").on("click", function () {  // event atamak
-            if (confirm("Are you sure?")) { // Onaylama  
+            if (confirm("Are you sure?")) { // Onaylama
 
                 var movieId = $(this).attr("data-id");
                 var row = $(this).closest("tr"); // en yakın element - class etc (selector)
 
                 $.ajax({
                     type: 'POST',   // Reuest   type  GET, POST, DELETE, PUT ...
-                    url: 'Films/DeleteFilm',  // Request URL 
+                    url: 'Films/DeleteFilm',  // Request URL
                     data: { movieId: movieId }, // Parameters   -- Adı aynı olması lazım    => public ActionResult DeleteFilm(int movieId)   movieId = movieId
                     success: function (data) {  // data : dönen veri = Output
-                        if (data.Result) { 
-                            $(row).remove(); // row sil 
+                        if (data.Result) {
+                            $(row).remove(); // row sil
                         }
                     }
                 });
@@ -55,6 +55,44 @@
             if (status) { return "New"; }
             else return "Second Hand";
         });
+        $(".rate-editor").val(function () {
+            var movieId = $(this).attr('data-id');
+            var data_rate = $('#rate-' + movieId).attr('data-rate');
+            return data_rate;
+        });
+
+        $('.rate-editor').on('change', function () {
+            var movieId = $(this).attr('data-id');
+            var newRate = $('#rate-' + movieId).val();
+            var row = $(this).closest("tr");
+            var classRow = "";
+
+            if (newRate < 5) {
+                classRow = "danger";
+            }
+            else if (newRate < 6) {
+                classRow = "warning";
+            }
+            else if (newRate < 7) {
+                classRow = "active";
+            }
+            else if (newRate < 8) {
+                classRow = "success";
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/Films/RateUpdate',
+                data: { movieId: movieId, newRate: newRate},
+                success: function (data) {
+                    if (data.Result) {
+                        $('#rate-' + movieId).val(newRate);
+                        row.removeClass();
+                        row.addClass(classRow);
+                    }
+                }
+            });
+            
+        });
     });
 </script>
  
@@ -71,7 +109,6 @@
         </p>
     }
 </p>
-
 
 <table class="table">
     <tr>
@@ -145,13 +182,15 @@
             @Html.DisplayFor(modelItem => item.Genre)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Rate)
+            <div class="form-inline">
+                <input type="number" class="rate-editor text-center"  id="rate-@item.ID" data-rate="@item.Rate" data-id="@item.ID" data-old-rate="@item.Rate"/>
+            </div>
         </td>
         <td>
             <div class="checkbox">
                 <input type="checkbox" id="status-@item.ID" class="status-toggle" checked="@item.Status" data-id="@item.ID" />
             </div>
-            <label class="status-label" id="status-label-@item.ID" check="@item.Status">New</label>
+            <label class="status-label text-warning" id="status-label-@item.ID" check="@item.Status">New</label>
         </td>
         <td>
             @Html.ActionLink("Edit Me", "Edit", new { id=item.ID }) |
@@ -160,5 +199,4 @@
         </td>
     </tr>
 }
-
 </table>
